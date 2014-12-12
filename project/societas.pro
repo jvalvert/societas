@@ -12,15 +12,11 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Societas
+TARGET = societas
 TEMPLATE = app
 
-FORMS    += gui.ui
-INCLUDEPATH += ../include \
-               ../src
-HEADERS += \
-     ../include/gui.h
+INCLUDEPATH +=../include
 
-SOURCES += \
-    ../src/gui.cpp \
-    ../src/main.cpp
+include($${SOLUTION_DIR}../societas.pri)
+
+FORMS    += gui.ui
