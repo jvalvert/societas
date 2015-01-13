@@ -12,11 +12,16 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+
+LIBS += -L/usr/local/lib  -lresolv -lgloox  -lcrypto -lssl -lz -lidn
+
 TARGET = societas
 TEMPLATE = app
 
 INCLUDEPATH +=../include
 
 include($${SOLUTION_DIR}../societas.pri)
+
+
 
 FORMS    += gui.ui
