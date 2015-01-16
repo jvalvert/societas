@@ -16,11 +16,16 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+public slots:
+    void SL_Quitting();
 
 
+private slots:
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
 };
 extern MainWindow * pMainWindow;
+extern bool societasQuit;
 #endif // MAINWINDOW_H

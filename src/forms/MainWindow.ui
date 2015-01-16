@@ -159,6 +159,19 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>40</y>
+       <width>115</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>exit</string>
+     </property>
+    </widget>
    </widget>
    <zorder>frame</zorder>
    <zorder>label_3</zorder>

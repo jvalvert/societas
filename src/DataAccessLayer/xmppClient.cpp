@@ -35,16 +35,23 @@ void xmppClient::finishXmppSession()
 delete( j );
 }
 
-void xmppClient::receiveXmppMessages()
+ConnectionError xmppClient::receiveXmppMessages()
 {
-    ConnectionError ce = ConnNoError;
-    int sleepCounter=0;
-    while (ce==ConnNoError ){
-    ce = j->recv();
-    sleep(1);
+    ConnectionError ce;
+    if(!starting)
+    {
+
+    ce=j->recv();
+    #if defined( WIN32 ) || defined( _WIN32 )
+        Sleep( 1000 );
+    #else
+        sleep( 4 );
+    #endif
+        qDebug()<< "done";
+    return ce;
     }
-     if (ce != ConnNoError)
-          printf( "ce: %d\n", ce );
+    else
+     return gloox::ConnNotConnected;
 }
  bool xmppClient::sendMessage(std::string strJid,std::string strXmppServer,std::string message)
  {
@@ -82,9 +89,9 @@ void xmppClient::onConnect()
 {
   time_t from( info.date_from );
   time_t to( info.date_to );
-  starting=false;
+
   //QMessageBox::information( pMainWindow,"Connection info","TLS Connection successful",QMessageBox::Ok);
-  qDebug()<< "Connected over TLS";
+  qDebug()<< "Connecting over TLS..";
   printf( "status: %d\nissuer: %s\npeer: %s\nprotocol: %s\nmac: %s\ncipher: %s\ncompression: %s\n"
           "from: %s\nto: %s\n ",
           info.status, info.issuer.c_str(), info.server.c_str(),
@@ -109,13 +116,13 @@ void xmppClient::onConnect()
     #endif
   m_messageEventFilter->raiseMessageEvent( MessageEventComposing );
   m_chatStateFilter->setChatState( ChatStateComposing );
-
+/*
     #if defined( WIN32 ) || defined( _WIN32 )
         Sleep( 2000 );
     #else
         sleep( 2 );
     #endif
-
+*/
   if( msg.body() == "quit" )
     j->disconnect();
   else if( msg.body() == "subscribe" )
