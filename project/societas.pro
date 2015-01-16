@@ -8,12 +8,13 @@
 #-------------------------------------------------
 
 VERSION = 0.1.0
-QT       += core gui
+QT       += core gui concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 mac:{
 #XMPP and Crypto dependencies
+
 LIBS += -L/usr/local/lib  -lresolv -lgloox  -lcrypto -lssl -lz -lidn
 #MONGOOSE webserver dependencies
 LIBS += -L/usr/local/lib -lmongoose

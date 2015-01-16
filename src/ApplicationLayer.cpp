@@ -39,14 +39,9 @@ QString g_Api_route = "/api/";// route for all Restful Apis
 //======================================THREAD MANAGEMENT AND SERVER STARTUP===========================================
 //protected method that start the mongoose server in a separate thread
 
-
-
-void
-ApplicationService::run()
+void ApplicationService::run()
     {
-    int a;
-    a = 10;
-    a--;
+
     qDebug()<<"Webserver API running in a process thread: " << currentThreadId();
     // Create and configure the server
     server = mg_create_server(NULL, ev_handler);

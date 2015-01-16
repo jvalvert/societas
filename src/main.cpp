@@ -1,59 +1,42 @@
-#include "PresentationLayer.h"
-
 #include <QApplication>
+#include <qtconcurrent/QtConcurrent>
+#include "PresentationLayer.h"
+//#include "DataAccessLayer.h"
+#include "DataAccessLayer/xmppClient.h"
 
 
-#include <DataAccessLayer/webSocketEchoServer.h>
-
-//#define WEBSOCKETS_POC
-//#define GLOOX_POC
-
+void startXmppClient()
+{
+    xmppClient xc;
+    xc.startXmppSession("valvert","xmpp.cambrian.org","Cambrian","CentralServices");
+    xc.receiveXmppMessages();
+}
 int main(int argc, char *argv[])
 {
+   /// Instanciate Main Process
     QApplication mainProcess(argc, argv);
-
     qDebug()<<"Main Societas Thread: "<<QThread::currentThreadId();
-
-    // Start a thread inside the main process
+/*
+  /// Start Application THREAD
     ApplicationService appServiceThread;
-    // destroy the thread before quit the app
-     QObject::connect(&mainProcess, SIGNAL(aboutToQuit()), &appServiceThread, SLOT(sl_quit()));
-    //start the webserver thread
+    // destroy the Application Thread before kill the main process
+    QObject::connect(&mainProcess, SIGNAL(aboutToQuit()), &appServiceThread, SLOT(sl_quit()));
+    //start application service Thread
     appServiceThread.start();
-    //The gui must be called after the server loads...
+*/
 
-
+    // Presentation Layer Start the Main Window
     MainWindow societasMainWindow;
-
-#ifdef GLOOX_POC
-
-   /*  Use for command line tests
-    * if (argc !=5)
-    {
-      printf("\nSocietas 2015. Incorrect parameters. \nrun > Societas <jabberid> <xmpp server FQDN> <xmpp Path> <password>\n");
-      return 0;
-    }
-   // get commandline parameters
-    std::string jid (argv[1]);
-    std::string xmppServer (argv[2]);
-    std::string xmppResource (argv[3]);
-    std::string password (argv[4]);
-
-   */
-
-
-    // r->sendMessage("jorge-linux10849380","xmpp.cambrian.org","Hi Jorge from Societas");
-     //r->sendMessage("mac15915979","xmpp.cambrian.org","Hi Mac from Societas");
-
-
-#endif
-
-#ifdef WEBSOCKETS_POC
-return startWebSocketServer("8080");
-#endif
-
-
     societasMainWindow.show();
+
+    //DataAccessService *ds = new DataAccessService();
+    //ds->xmpp_Login("valvert","CentralServices");
+
+     QFuture<void> result = QtConcurrent::run(startXmppClient);
+
+     //xc.sendMessage("mac",std::string strXmppServer,std::string message);
+    //Execute the main process and all threads
+
     mainProcess.exec();
     return 0;
 }

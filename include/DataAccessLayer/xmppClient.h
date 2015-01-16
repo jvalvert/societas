@@ -52,7 +52,9 @@ class xmppClient : public MessageSessionHandler, ConnectionListener, LogHandler,
     xmppClient() : m_session( 0 ), m_messageEventFilter( 0 ), m_chatStateFilter( 0 ) {}
     virtual ~xmppClient() {}
     void startXmppSession(std::string strJid,std::string strXmppServer,std::string strXmppResource,std::string strJidPassword);
+    void finishXmppSession();
     bool sendMessage(std::string strJid,std::string strXmppServer,std::string message);
+    void receiveXmppMessages();
 
 // implement methods
     virtual void onConnect();
@@ -152,6 +154,7 @@ class xmppClient : public MessageSessionHandler, ConnectionListener, LogHandler,
     MessageSession *m_session;
     MessageEventFilter *m_messageEventFilter;
     ChatStateFilter *m_chatStateFilter;
+    bool starting;
 };
 
 

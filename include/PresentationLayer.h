@@ -15,11 +15,9 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    xmppClient *p_xmppClient;
     ~MainWindow();
 
-private slots:
-    void on_connect_2_clicked();
+
 
 private:
     Ui::MainWindow *ui;

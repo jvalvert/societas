@@ -6,7 +6,6 @@
 void xmppClient::startXmppSession(std::string strJid,std::string strXmppServer,std::string strXmppResource,std::string strJidPassword)
 {
   // Login to the server
-
   JID jid( strJid+"@"+strXmppServer+"/"+strXmppResource);
   // on this example, the password is empty to login without authentication
   j = new Client( jid, strJidPassword);
@@ -19,27 +18,34 @@ void xmppClient::startXmppSession(std::string strJid,std::string strXmppServer,s
   StringList ca;
   ca.push_back( "/path/to/cacert.crt" );
   j->setCACerts( ca );
-
   j->logInstance().registerLogHandler( LogLevelError, LogAreaAll, this );
-
-
+  starting=true;
   if( j->connect( false ) )
   {
-    ConnectionError ce = ConnNoError;
+   ConnectionError ce = ConnNoError;
+   while (ce==ConnNoError && starting)
+   ce = j->recv();
+    if (ce != ConnNoError)
+         printf( "ce: %d\n", ce );
 
-
-    while( ce == ConnNoError )
-    {
-
-        ce = j->recv();
-    }
-    printf( "ce: %d\n", ce );
-  }
-
-  delete( j );
 }
-//jorge-linux10849380@xmpp.cambrian.org
-//mac15915979@xmpp.cambrian.org
+}
+void xmppClient::finishXmppSession()
+{
+delete( j );
+}
+
+void xmppClient::receiveXmppMessages()
+{
+    ConnectionError ce = ConnNoError;
+    int sleepCounter=0;
+    while (ce==ConnNoError ){
+    ce = j->recv();
+    sleep(1);
+    }
+     if (ce != ConnNoError)
+          printf( "ce: %d\n", ce );
+}
  bool xmppClient::sendMessage(std::string strJid,std::string strXmppServer,std::string message)
  {
      if(j->authed()) {
@@ -58,7 +64,9 @@ void xmppClient::startXmppSession(std::string strJid,std::string strXmppServer,s
 void xmppClient::onConnect()
 {
   printf( "connected to XMPP server\n" );
-  QMessageBox::information( pMainWindow,"Connection info","Connection successful",QMessageBox::Ok);
+  qDebug() << "Conected !!";
+  //QMessageBox::information( pMainWindow,"Connection info","Connection successful",QMessageBox::Ok);
+  starting=false;
 }
 
 
@@ -67,14 +75,16 @@ void xmppClient::onConnect()
   printf( "message_test: disconnected: %d\n", e );
   if( e == ConnAuthenticationFailed )
     printf( "auth failed. reason: %d\n", j->authError() );
-}
+
+ }
 
  bool xmppClient::onTLSConnect( const CertInfo& info )
 {
   time_t from( info.date_from );
   time_t to( info.date_to );
-
-
+  starting=false;
+  //QMessageBox::information( pMainWindow,"Connection info","TLS Connection successful",QMessageBox::Ok);
+  qDebug()<< "Connected over TLS";
   printf( "status: %d\nissuer: %s\npeer: %s\nprotocol: %s\nmac: %s\ncipher: %s\ncompression: %s\n"
           "from: %s\nto: %s\n ",
           info.status, info.issuer.c_str(), info.server.c_str(),
@@ -88,29 +98,23 @@ void xmppClient::onConnect()
   printf( "\nNew Message Arrived from id %s:\n type: %d, subject: %s, message: %s, thread id: %s\n",msg.from().bare().c_str(),
           msg.subtype(), msg.subject().c_str(), msg.body().c_str(), msg.thread().c_str() );
 
-  printf("\nPlease Response:\n");
-
-  std::string re;
-  std::getline(std::cin,re);
-  std::string sub;
-  if( !msg.subject().empty() )
-    sub = "Re: " +  msg.subject();
+  qDebug() << QTime::currentTime()<< " - Message Content :"<< QString::fromStdString(msg.body());
 
   m_messageEventFilter->raiseMessageEvent( MessageEventDisplayed );
 
 #if defined( WIN32 ) || defined( _WIN32 )
-  Sleep( 1000 );
-#else
-  sleep( 1 );
-#endif
+        Sleep( 1000 );
+    #else
+        sleep( 1 );
+    #endif
   m_messageEventFilter->raiseMessageEvent( MessageEventComposing );
   m_chatStateFilter->setChatState( ChatStateComposing );
-#if defined( WIN32 ) || defined( _WIN32 )
-  Sleep( 2000 );
-#else
-  sleep( 2 );
-#endif
-  m_session->send( re, sub );
+
+    #if defined( WIN32 ) || defined( _WIN32 )
+        Sleep( 2000 );
+    #else
+        sleep( 2 );
+    #endif
 
   if( msg.body() == "quit" )
     j->disconnect();
@@ -149,9 +153,15 @@ void xmppClient::onConnect()
   m_messageEventFilter->registerMessageEventHandler( this );
   m_chatStateFilter = new ChatStateFilter( m_session );
   m_chatStateFilter->registerChatStateHandler( this );
-}
+
+ }
 
  void xmppClient::handleLog( LogLevel level, LogArea area, const std::string& message )
 {
   printf("log: level: %d, area: %d, %s\n", level, area, message.c_str() );
+  QString qlevel(level);
+  QString qarea(area);
+  QString qmessage = QString::fromStdString(message);
+  qDebug() << "LOG=> level: " << qlevel << " area: " << qarea <<" message: " << qmessage;
+
 }
