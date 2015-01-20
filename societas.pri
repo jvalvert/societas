@@ -4,7 +4,6 @@ HEADERS += \
     $$PWD/include/ApplicationLayer.h \
     $$PWD/include/BusinessLayer.h \
     $$PWD/include/DataAccessLayer/xmppClient.h \
-    $$PWD/include/DataAccessLayer/webSocketEchoServer.h \
     $$PWD/include/BusinessLayer.h \
     $$PWD/include/DataAccessLayer.h
 SOURCES += \

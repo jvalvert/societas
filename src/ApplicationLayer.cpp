@@ -32,9 +32,10 @@ QString  g_webServerAddress = "localhost"; // the Http server  for serve Apps fr
 QString  g_webServerPort= "38000"; // the listening port, used to start the server and as reference to open the apps and call the restful webservices
 
 // Apps and Restful services info for routing
-QString g_Apps_route = "/Apps/"; // route for all apps
+QString g_Apps_route = "/apps/"; // route for all apps
 QString g_Api_route = "/api/";// route for all Restful Apis
 
+     xmppClient *p_xmpp = new xmppClient();
 
 //======================================THREAD MANAGEMENT AND SERVER STARTUP===========================================
 //protected method that start the mongoose server in a separate thread
@@ -59,9 +60,38 @@ void ApplicationService::run()
 
     qDebug() << "Society Pro Web API. by Central Services. Listening at port "+g_webServerPort+"...";
 
-    while(true)
-        mg_poll_server(server, 1000);
+     time_t current_timer = 0, last_timer = time(NULL);
+     time_t current_timer_X = 0, last_timer_X = time(NULL);
+
+    ConnectionError ce = gloox::ConnNoError;
+
+    //TO DO: Store the default identity (or the last used) to be used in the next line:
+    p_xmpp->startXmppSession("valvert","xmpp.cambrian.org","Cambrian","CentralServices");
+    for (;;) {
+      mg_poll_server(server, 100);
+      current_timer = time(NULL);
+      if (current_timer - last_timer > 0) {
+        last_timer = current_timer;
+         // websocket
+         push_message(server, current_timer);
+         // xmpp Client receiving events
+         //ce = xc.receiveXmppMessages();
+
+         }
+
+      current_timer_X = time(NULL);
+      if (current_timer_X - last_timer_X > 0) {
+        last_timer_X = current_timer_X;
+
+         // xmpp Client receiving events
+         ce = p_xmpp->receiveXmppMessages();
+
+         }
+
     }
+}
+
+
 
 void ApplicationService::sl_quit()
 {
@@ -73,7 +103,6 @@ void ApplicationService::sl_quit()
    // close the thread
     terminate();
 }
-
 
 
 
@@ -185,15 +214,15 @@ std::string ApplicationService::getRequestParameter(struct mg_connection *conn,s
     if (parseApiRoute (restUri, apiCode, methodCode)) // correct api method was invoked
      {
      BusinessLayer BusinessLayer;
-     std::string jsonResponse="{result:\"Valid but not implemented yet\" s s}";
-     fprintf(stderr,"\nApi Exists: Api Code %i Method Code %i",apiCode,methodCode);
+     std::string jsonResponse="{result:\"Valid but not implemented yet\"}";
+     qDebug()<<"\nApi Exists: Api Code "<< apiCode << "Method Code "<< methodCode;
 
 // Given and app code and method code invoke the apropiate method and return the json object
 // Define all the api paths for restful webservices in const std::string apiMatrix[][] (headerfile)
 
      switch(apiCode) //evaluate the api code
     {
-        case 0: /////////////API CODE 0 ///////////////////////
+        case 0: /////////////API CODE MANAGEMENT ///////////////////////
         {
             switch (methodCode) // for testing pruposes
             {
@@ -209,15 +238,37 @@ std::string ApplicationService::getRequestParameter(struct mg_connection *conn,s
                 }
             }
          break;
-       }///////////////////END APICODE 0/////////////////////////////
+       }///////////////////END APICODE MANAGEMENT/////////////////////////////
 
-       case 1: ///////////////////API CODE 1////////////////////////////
+       case 1: ///////////////////API CODE XMPP////////////////////////////
        {
             switch (methodCode)
             {
-                case 1:
+                case 1: //send?jid= account@serverxmpp.fqdn&subject= subject content&message= message body
                 {
+                 ///request parameters
+                    std::string strJid=getRequestParameter(conn,"jid");
+                    std::string strSubject=getRequestParameter(conn,"subject");
+                    std::string strMessage=getRequestParameter(conn,"message");
 
+                    if (strJid.compare("")== 0 || strMessage.compare("")==0) // subject parameter is optional
+                    {
+                     jsonResponse="{result:\"ERROR: Correct usage xmpp.send?jid=<account@serverxmpp.fqdn>[&subject=<subject content>]&message=<message body content>\"}";
+                    }
+                    else
+                    {
+                     if (p_xmpp->sendMessage(strJid,strMessage)){
+                     jsonResponse="{result:\"MESSAGE SENT...\"}";
+                     }
+                     else
+                      {
+                        jsonResponse="{result:\"ERROR: Failed to send message\"}";
+
+                     }
+                    }
+
+                   // call the correspondant BusinessLayer method and asign the return value to jsonResponse. for example:
+                   //jsonResponse= BusinessLayer.test_OT(role,1);
 
                     break;
                }
@@ -283,7 +334,11 @@ std::string ApplicationService::getRequestParameter(struct mg_connection *conn,s
      mg_printf_data(conn, jsonResponse.c_str());
      return MG_TRUE;
      }
+    else
+    {
+        qDebug()<<"\nThe method "<< QString::fromStdString(restUri) << " does not exists";
 
+    }
     // wrong request go resource not found
     mg_send_file(conn, s_notfound_uri, s_no_cache_header);
     return MG_MORE;
@@ -291,6 +346,38 @@ std::string ApplicationService::getRequestParameter(struct mg_connection *conn,s
 
 
 }
+
+ //======================================HANDLE WEBSOCKETS======================================================
+
+   void ApplicationService::push_message(struct mg_server *server, time_t current_time) {
+   struct mg_connection *c;
+   char buf[200];
+   int len = sprintf(buf, "Response from Mongoose Websocket. Timestamp: %lu", (unsigned long) current_time);
+
+   // Iterate over all connections, and push current time message to websocket ones.
+   for (c = mg_next(server, NULL); c != NULL; c = mg_next(server, c)) {
+     if (c->is_websocket) {
+       mg_websocket_write(c, 1, buf, len);
+     }
+   }
+ }
+
+
+  int ApplicationService::send_reply(struct mg_connection *conn) {
+   if (conn->is_websocket) {
+     // This handler is called for each incoming websocket frame, one or more
+     // times for connection lifetime.
+     // Echo websocket data back to the client.
+     mg_websocket_write(conn, 1, conn->content, conn->content_len);
+     return conn->content_len == 4 && !memcmp(conn->content, "exit", 4) ?
+       MG_FALSE : MG_TRUE;
+   } else {
+     mg_send_file(conn, "index.html", NULL);
+     return MG_MORE;
+   }
+ }
+
+
 
 
 //============================================HANDLE WEB REQUESTS======================================================
@@ -422,13 +509,19 @@ int ApplicationService::ev_handler(struct mg_connection *conn, enum mg_event ev)
 
   switch (ev) {
    case MG_AUTH: // TO DO: a full user authentication mecanism calling CHECK_AUTH
-                 //        in this stage, assume a non hostile environment :)
+  {           //        in this stage, assume a non hostile environment :)
       return MG_TRUE; //check_auth(conn);
-
+  }
   case MG_REQUEST:
-
-    return serve_request(conn);
-
+   {      // check if is a websocket request
+       if (conn->is_websocket)
+       {
+            qDebug() << "IS websocket";
+           return send_reply(conn);
+       }
+          qDebug() << "NOT a  websocket";
+         return serve_request(conn);
+    }
   default: return MG_FALSE;
  }
 }

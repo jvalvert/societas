@@ -15,6 +15,9 @@
 #include <QtCore>
 #include "mongoose/Mongoose.h"
 #include <fstream>
+#include "DataAccessLayer/xmppClient.h"
+
+
 //#include <BussinesLayer> // use the Sopro Api to access to all the logic for example
 
 
@@ -46,10 +49,11 @@ static  char *s_secret =NULL;  // This value changes when the user logins
 const int maxNamespaces=4;
 const int maxMethod=10; // amount of methods
 const std::string apiMatrix[maxNamespaces][maxMethod] =
-                                { {"test","mult","@","@","@","@","@","@","@","@"},                                /// Role Management Namespace
-                                  {"management","create","@","@","@","@","@","@","@","@"},                                /// Chat Namespace
-                                  {"chat","history","@","@","@","@","@","@","@","@"},
-                                  {"files","upload","@","@","@","@","@","@","@","@"}
+                                {
+                                  {"management","create","@","@","@","@","@","@","@","@"}, /// Role Management Namespace
+                                  {"xmpp","send","@","@","@","@","@","@","@","@"}, /// Chat Namespace
+                                  {"files","upload","@","@","@","@","@","@","@","@"},
+                                  {"test","mult","@","@","@","@","@","@","@","@"},
                                   //{"@","@","@","@","@","@","@","@","@","@"} //remember to increase maxNamespaces
                                 }
         ;
@@ -67,6 +71,8 @@ class ApplicationService : public QThread
      static int  ev_handler(struct mg_connection *conn, enum mg_event ev);
      static int  serve_request(struct mg_connection *conn);
      static int  route_api_requests(struct mg_connection *conn);
+     static void push_message(struct mg_server *server, time_t current_time);
+     static int send_reply(struct mg_connection *conn);
 
 
  private slots:

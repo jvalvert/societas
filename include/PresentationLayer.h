@@ -18,13 +18,14 @@ public:
     ~MainWindow();
 public slots:
     void SL_Quitting();
-
-
-private slots:
-    void on_pushButton_clicked();
+protected slots:
+    void setProgress(int p);
+    void finishLoading(bool);
 
 private:
     Ui::MainWindow *ui;
+    void refreshLoadProgress(int progress);
+    void splashScreen(bool show);
 };
 extern MainWindow * pMainWindow;
 extern bool societasQuit;

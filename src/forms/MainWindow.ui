@@ -14,176 +14,50 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_3">
+   <widget class="QWebView" name="webView">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>20</x>
       <y>20</y>
-      <width>59</width>
-      <height>16</height>
+      <width>761</width>
+      <height>511</height>
      </rect>
     </property>
-    <property name="text">
-     <string>password</string>
+    <property name="url">
+     <url>
+      <string>about:blank</string>
+     </url>
     </property>
    </widget>
-   <widget class="QLineEdit" name="jid">
+   <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>20</y>
-      <width>81</width>
-      <height>21</height>
+      <x>210</x>
+      <y>250</y>
+      <width>551</width>
+      <height>23</height>
      </rect>
     </property>
-    <property name="text">
-     <string>valvert</string>
+    <property name="value">
+     <number>24</number>
     </property>
    </widget>
-   <widget class="QLineEdit" name="resource">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>20</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Cambrian</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>300</y>
-      <width>59</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Log</string>
-    </property>
-   </widget>
-   <widget class="QTextBrowser" name="log">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>327</y>
-      <width>651</width>
-      <height>101</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="password">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>20</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="inputMask">
-     <string/>
-    </property>
-    <property name="text">
-     <string>CentralServices</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="Label_Progress_Bar">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>20</y>
-      <width>59</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Jabber Id</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>590</x>
-      <y>20</y>
-      <width>59</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>resource</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="xmppServer">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>20</y>
-      <width>141</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>xmpp.cambrian.org</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>20</y>
-      <width>101</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>xmpp Server</string>
-    </property>
-   </widget>
-   <widget class="QFrame" name="frame">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>721</width>
-      <height>71</height>
+      <y>250</y>
+      <width>171</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+     <enum>QFrame::NoFrame</enum>
     </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
+    <property name="text">
+     <string/>
     </property>
-    <widget class="QPushButton" name="pushButton">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>40</y>
-       <width>115</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>exit</string>
-     </property>
-    </widget>
    </widget>
-   <zorder>frame</zorder>
-   <zorder>label_3</zorder>
-   <zorder>jid</zorder>
-   <zorder>resource</zorder>
-   <zorder>label_4</zorder>
-   <zorder>log</zorder>
-   <zorder>password</zorder>
-   <zorder>label</zorder>
-   <zorder>label_5</zorder>
-   <zorder>xmppServer</zorder>
-   <zorder>label_2</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -197,6 +71,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKitWidgets/QWebView</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

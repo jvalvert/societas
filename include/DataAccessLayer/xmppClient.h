@@ -53,7 +53,7 @@ class xmppClient : public MessageSessionHandler, ConnectionListener, LogHandler,
     virtual ~xmppClient() {}
     void startXmppSession(std::string strJid,std::string strXmppServer,std::string strXmppResource,std::string strJidPassword);
     void finishXmppSession();
-    bool sendMessage(std::string strJid,std::string strXmppServer,std::string message);
+    bool sendMessage(std::string strJid, std::string message);
     ConnectionError receiveXmppMessages();
 
 // implement methods

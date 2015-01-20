@@ -37,32 +37,26 @@ delete( j );
 
 ConnectionError xmppClient::receiveXmppMessages()
 {
-    ConnectionError ce;
-    if(!starting)
-    {
 
-    ce=j->recv();
-    #if defined( WIN32 ) || defined( _WIN32 )
-        Sleep( 1000 );
-    #else
-        sleep( 4 );
-    #endif
-        qDebug()<< "done";
-    return ce;
-    }
-    else
-     return gloox::ConnNotConnected;
+    // due the conection (j->connect(false)) was initiated on a "Non Blocking Mode"
+    // we need to set a timeout for the recv call (1000 micro seconds)
+    // the timeout ocurrs when no data is available to receive
+   return j->recv(1000);
+
+
 }
- bool xmppClient::sendMessage(std::string strJid,std::string strXmppServer,std::string message)
+ bool xmppClient::sendMessage(std::string strJid,std::string message)
  {
      if(j->authed()) {
-     Message m( Message::Chat, JID( strJid+"@"+strXmppServer ), message );
+     qDebug()<<"Sending reply to :"+QString::fromStdString(strJid);
+     Message m( Message::Chat, JID( strJid ), message );
      j->send( m );
      return true;
+
      }
      else
      {
-     printf("Error, user not authenticated");
+     qDebug() <<"Error, user not authenticated,can´t send the message to "+QString::fromStdString(strJid);;
      }
 
  return false;
@@ -102,10 +96,15 @@ void xmppClient::onConnect()
 
  void xmppClient::handleMessage( const Message& msg, MessageSession * /*session*/ )
 {
-  printf( "\nNew Message Arrived from id %s:\n type: %d, subject: %s, message: %s, thread id: %s\n",msg.from().bare().c_str(),
-          msg.subtype(), msg.subject().c_str(), msg.body().c_str(), msg.thread().c_str() );
+  //printf( "\nNew Message Arrived from id %s:\n type: %d, subject: %s, message: %s, thread id: %s\n",msg.from().bare().c_str(),
+  //        msg.subtype(), msg.subject().c_str(), msg.body().c_str(), msg.thread().c_str() );
 
   qDebug() << QTime::currentTime()<< " - Message Content :"<< QString::fromStdString(msg.body());
+
+  //Response
+  sendMessage(msg.from().bare(),"Response from original message >>>>>>\n"+msg.body()+"\n<<<<<");
+
+
 
   m_messageEventFilter->raiseMessageEvent( MessageEventDisplayed );
 
@@ -151,8 +150,8 @@ void xmppClient::onConnect()
 
  void xmppClient::handleMessageSession( MessageSession *session )
 {
-  printf( "got new session\n");
-  // this example can handle only one session. so we get rid of the old session
+  qDebug() << " New session established \n";
+  // we can handle only one session. so we get rid of the old session
   j->disposeMessageSession( m_session );
   m_session = session;
   m_session->registerMessageHandler( this );
@@ -165,10 +164,10 @@ void xmppClient::onConnect()
 
  void xmppClient::handleLog( LogLevel level, LogArea area, const std::string& message )
 {
-  printf("log: level: %d, area: %d, %s\n", level, area, message.c_str() );
+  //qDebug() << "log: level: %d, area: %d, %s\n", level, area, message.c_str() ;
   QString qlevel(level);
   QString qarea(area);
   QString qmessage = QString::fromStdString(message);
-  qDebug() << "LOG=> level: " << qlevel << " area: " << qarea <<" message: " << qmessage;
+  qDebug() << "LOG => level: " << qlevel << " area: " << qarea <<" message: " << qmessage;
 
 }

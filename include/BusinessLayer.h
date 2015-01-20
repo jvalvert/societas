@@ -16,18 +16,12 @@ As a midle tier component, it has some services to facilitate the api routing to
 #include <iostream>
 #include <string>
 
-
-
 class BusinessLayer
 {
 
 public:
     BusinessLayer();
     ~BusinessLayer();
-
-
-
-
 
 //crypto methods
     std::string crypto_secureRandom(int low, int high,std::string source);
