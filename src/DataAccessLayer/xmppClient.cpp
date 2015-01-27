@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include <PresentationLayer.h>
 
-void xmppClient::startXmppSession(std::string strJid,std::string strXmppServer,std::string strXmppResource,std::string strJidPassword)
+gloox::ConnectionError xmppClient::startXmppSession(std::string strJid,std::string strXmppServer,std::string strXmppResource,std::string strJidPassword)
 {
   // Login to the server
   JID jid( strJid+"@"+strXmppServer+"/"+strXmppResource);
@@ -20,15 +20,16 @@ void xmppClient::startXmppSession(std::string strJid,std::string strXmppServer,s
   j->setCACerts( ca );
   j->logInstance().registerLogHandler( LogLevelError, LogAreaAll, this );
   starting=true;
+  ConnectionError ce;
   if( j->connect( false ) )
   {
-   ConnectionError ce = ConnNoError;
+   ce = ConnNoError;
    while (ce==ConnNoError && starting)
    ce = j->recv();
     if (ce != ConnNoError)
-         printf( "ce: %d\n", ce );
-
-}
+         return ce;
+  }
+ return ce;
 }
 void xmppClient::finishXmppSession()
 {
@@ -86,11 +87,14 @@ void xmppClient::onConnect()
 
   //QMessageBox::information( pMainWindow,"Connection info","TLS Connection successful",QMessageBox::Ok);
   qDebug()<< "Connecting over TLS..";
-  printf( "status: %d\nissuer: %s\npeer: %s\nprotocol: %s\nmac: %s\ncipher: %s\ncompression: %s\n"
+
+  //  info about the cipher connection
+  /*printf( "status: %d\nissuer: %s\npeer: %s\nprotocol: %s\nmac: %s\ncipher: %s\ncompression: %s\n"
           "from: %s\nto: %s\n ",
           info.status, info.issuer.c_str(), info.server.c_str(),
           info.protocol.c_str(), info.mac.c_str(), info.cipher.c_str(),
           info.compression.c_str(), ctime( &from ), ctime( &to ) );
+  */
   return true;
 }
 
@@ -99,29 +103,19 @@ void xmppClient::onConnect()
   //printf( "\nNew Message Arrived from id %s:\n type: %d, subject: %s, message: %s, thread id: %s\n",msg.from().bare().c_str(),
   //        msg.subtype(), msg.subject().c_str(), msg.body().c_str(), msg.thread().c_str() );
 
-  qDebug() << QTime::currentTime()<< " - Message Content :"<< QString::fromStdString(msg.body());
+  qDebug() << QTime::currentTime() << " - Message Arrived from:"
+                                   << QString::fromStdString(msg.from().bare())
+                                   << QString::fromStdString(msg.body());
 
-  //Response
-  sendMessage(msg.from().bare(),"Response from original message >>>>>>\n"+msg.body()+"\n<<<<<");
-
-
+    //reply example
+  //sendMessage(msg.from().bare(),"Response from original message >>>>>>\n"+msg.body()+"\n<<<<<");
 
   m_messageEventFilter->raiseMessageEvent( MessageEventDisplayed );
-
-#if defined( WIN32 ) || defined( _WIN32 )
-        Sleep( 1000 );
-    #else
-        sleep( 1 );
-    #endif
   m_messageEventFilter->raiseMessageEvent( MessageEventComposing );
   m_chatStateFilter->setChatState( ChatStateComposing );
-/*
-    #if defined( WIN32 ) || defined( _WIN32 )
-        Sleep( 2000 );
-    #else
-        sleep( 2 );
-    #endif
-*/
+
+// test chat states
+
   if( msg.body() == "quit" )
     j->disconnect();
   else if( msg.body() == "subscribe" )
@@ -132,20 +126,25 @@ void xmppClient::onConnect()
     j->rosterManager()->cancel( msg.from() );
   else if( msg.body() == "remove" )
     j->rosterManager()->remove( msg.from() );
-  else
-    printf( "msg: %s\n", msg.body().c_str() );
+  else // message received send throught websocket
+  {
+  //TODO: format the message to json
+  //TODO: create and use a config file to handle the connection parameters
+  //webSocketClient client(QUrl(QStringLiteral("ws://localhost:38000")),QString::fromStdString(msg.body()));
+  EchoClient client(QUrl(QStringLiteral("ws://localhost:38000")),"Message from xmpp");
 
+  }
 
 }
 
  void xmppClient::handleMessageEvent( const JID& from, MessageEventType event )
 {
-  printf( "received event: %d from: %s\n", event, from.full().c_str() );
+  qDebug() << "Message Event: "<< event <<" from: " << QString::fromStdString(from.full());
 }
 
  void xmppClient::handleChatState( const JID& from, ChatStateType state )
 {
-  printf( "received state: %d from: %s\n", state, from.full().c_str() );
+  printf( "Chat state event: %d from: %s\n", state, from.full().c_str() );
 }
 
  void xmppClient::handleMessageSession( MessageSession *session )

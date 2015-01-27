@@ -8,7 +8,7 @@
 #-------------------------------------------------
 
 VERSION = 0.1.0
-QT       += core gui concurrent
+QT       += core gui websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 

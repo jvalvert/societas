@@ -15,11 +15,8 @@
 #include <QtCore>
 #include "mongoose/Mongoose.h"
 #include <fstream>
-#include "DataAccessLayer/xmppClient.h"
-
 
 //#include <BussinesLayer> // use the Sopro Api to access to all the logic for example
-
 
 //aditional server headers
 static const char *s_no_cache_header =

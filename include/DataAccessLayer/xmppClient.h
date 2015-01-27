@@ -30,6 +30,9 @@
 #include "gloox/connectionhttpproxy.h"
 #include "gloox/messagehandler.h"
 #include "gloox/rostermanager.h"
+
+// send all received messages to AppLayer over websockets
+#include <DataAccessLayer/webSocketClient.h>
 using namespace gloox;
 
 #ifndef _WIN32
@@ -51,7 +54,7 @@ class xmppClient : public MessageSessionHandler, ConnectionListener, LogHandler,
   public:
     xmppClient() : m_session( 0 ), m_messageEventFilter( 0 ), m_chatStateFilter( 0 ) {}
     virtual ~xmppClient() {}
-    void startXmppSession(std::string strJid,std::string strXmppServer,std::string strXmppResource,std::string strJidPassword);
+    ConnectionError startXmppSession(std::string strJid,std::string strXmppServer,std::string strXmppResource,std::string strJidPassword);
     void finishXmppSession();
     bool sendMessage(std::string strJid, std::string message);
     ConnectionError receiveXmppMessages();

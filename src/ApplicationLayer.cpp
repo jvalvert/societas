@@ -35,15 +35,13 @@ QString  g_webServerPort= "38000"; // the listening port, used to start the serv
 QString g_Apps_route = "/apps/"; // route for all apps
 QString g_Api_route = "/api/";// route for all Restful Apis
 
-     xmppClient *p_xmpp = new xmppClient();
+
 
 //======================================THREAD MANAGEMENT AND SERVER STARTUP===========================================
 //protected method that start the mongoose server in a separate thread
 
 void ApplicationService::run()
     {
-
-    qDebug()<<"Webserver API running in a process thread: " << currentThreadId();
     // Create and configure the server
     server = mg_create_server(NULL, ev_handler);
     // Create the websocket to listen on a particular address (by default localhost)
@@ -57,41 +55,22 @@ void ApplicationService::run()
     // set the document root to the working directory of the app
     // in mac, inside a bundle directory where the executable is
     mg_set_option(server, "document_root", qAppPath.toStdString().c_str());
-
+    qDebug()<<"Application layer process thread: " << currentThreadId();
     qDebug() << "Society Pro Web API. by Central Services. Listening at port "+g_webServerPort+"...";
 
      time_t current_timer = 0, last_timer = time(NULL);
-     time_t current_timer_X = 0, last_timer_X = time(NULL);
 
-    ConnectionError ce = gloox::ConnNoError;
-
-    //TO DO: Store the default identity (or the last used) to be used in the next line:
-    p_xmpp->startXmppSession("valvert","xmpp.cambrian.org","Cambrian","CentralServices");
-    for (;;) {
-      mg_poll_server(server, 100);
-      current_timer = time(NULL);
-      if (current_timer - last_timer > 0) {
-        last_timer = current_timer;
-         // websocket
-         push_message(server, current_timer);
-         // xmpp Client receiving events
-         //ce = xc.receiveXmppMessages();
-
-         }
-
-      current_timer_X = time(NULL);
-      if (current_timer_X - last_timer_X > 0) {
-        last_timer_X = current_timer_X;
-
-         // xmpp Client receiving events
-         ce = p_xmpp->receiveXmppMessages();
-
-         }
-
-    }
+    forever {
+            mg_poll_server(server, 100);
+            current_timer = time(NULL);
+             if (current_timer - last_timer > 0)
+                {
+                last_timer = current_timer;
+                // websocket
+                //push_message(server, current_timer);
+                 }
+             }//forever
 }
-
-
 
 void ApplicationService::sl_quit()
 {
@@ -257,8 +236,11 @@ std::string ApplicationService::getRequestParameter(struct mg_connection *conn,s
                     }
                     else
                     {
-                     if (p_xmpp->sendMessage(strJid,strMessage)){
-                     jsonResponse="{result:\"MESSAGE SENT...\"}";
+                      //send a message using the bussines logic
+                     if (true/*p_xmpp->sendMessage(strJid,strMessage)*/)
+                     {
+                         jsonResponse="{result:\"MESSAGE SENT...\"}";
+
                      }
                      else
                       {
@@ -376,8 +358,6 @@ std::string ApplicationService::getRequestParameter(struct mg_connection *conn,s
      return MG_MORE;
    }
  }
-
-
 
 
 //============================================HANDLE WEB REQUESTS======================================================
@@ -515,11 +495,13 @@ int ApplicationService::ev_handler(struct mg_connection *conn, enum mg_event ev)
   case MG_REQUEST:
    {      // check if is a websocket request
        if (conn->is_websocket)
-       {
-            qDebug() << "IS websocket";
+
+       {   conn->content[conn->content_len]='\0';
+           std::string wsMessage = (conn->content);
+            qDebug() << "websocket message: "+ QString::fromStdString(wsMessage);
            return send_reply(conn);
        }
-          qDebug() << "NOT a  websocket";
+
          return serve_request(conn);
     }
   default: return MG_FALSE;
