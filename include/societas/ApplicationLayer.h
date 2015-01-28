@@ -56,7 +56,7 @@ const std::string apiMatrix[maxNamespaces][maxMethod] =
         ;
 
 
-class ApplicationService : public QThread
+class ApplicationService : public QThread // Implement Application Layer Thread
  {
      Q_OBJECT
 
@@ -79,8 +79,5 @@ class ApplicationService : public QThread
      static std::string getRequestParameter(mg_connection *conn, std::string parameterName);
      static bool parseApiRoute(std::string restUri, int &namespaceCode, int &methodCode);
 };
-
-
-
 
 #endif // APPLAYER_H

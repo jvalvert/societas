@@ -9,19 +9,27 @@
 
 VERSION = 0.1.0
 QT       += core gui websockets
+QMAKE_CXXFLAGS +=  -Wall -Wno-c++11-extensions
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 
 mac:{
+
+LIBS += -L/usr/local/lib
 #XMPP and Crypto dependencies
-LIBS += -L/usr/local/lib  -lresolv -lgloox  -lcrypto -lssl -lz -lidn
+LIBS += -lresolv -lgloox  -lcrypto -lssl -lz -lidn
 #MONGOOSE webserver dependencies
-LIBS += -L/usr/local/lib -lmongoose
+LIBS += -lmongoose
+#ZEROMQ
+LIBS += -lzmq
 }
 TARGET = societas
 TEMPLATE = app
 
-INCLUDEPATH +=../include
+INCLUDEPATH +=../include \
+              ../include/societas \
+              ../include/util
+
 
 include($${SOLUTION_DIR}../societas.pri)
 

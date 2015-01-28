@@ -9,7 +9,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow // Implement the sopro Gui using a single webview + HTML5 apps
 {
     Q_OBJECT
 

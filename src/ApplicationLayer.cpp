@@ -55,8 +55,8 @@ void ApplicationService::run()
     // set the document root to the working directory of the app
     // in mac, inside a bundle directory where the executable is
     mg_set_option(server, "document_root", qAppPath.toStdString().c_str());
-    qDebug()<<"Application layer process thread: " << currentThreadId();
-    qDebug() << "Society Pro Web API. by Central Services. Listening at port "+g_webServerPort+"...";
+    qDebug()<<"*Application layer process thread: " << currentThreadId();
+    qDebug() << "  Application Server listening at port" << g_webServerPort << "...";
 
      time_t current_timer = 0, last_timer = time(NULL);
 
@@ -76,13 +76,8 @@ void ApplicationService::sl_quit()
 {
 
     qDebug()<<"Closing Webserver API with thread: "<< QThread::currentThreadId();
-    // Cleanup, and free server instance
-   // if (NULL != server) // check if the server is not loaded at quit time
-   //    mg_destroy_server(&server);
-   // close the thread
     terminate();
 }
-
 
 
 //================================WEBSERVICES HANDLING===========================
@@ -192,7 +187,7 @@ std::string ApplicationService::getRequestParameter(struct mg_connection *conn,s
 
     if (parseApiRoute (restUri, apiCode, methodCode)) // correct api method was invoked
      {
-     BusinessLayer BusinessLayer;
+     BusinessLayerService businessLayerService;
      std::string jsonResponse="{result:\"Valid but not implemented yet\"}";
      qDebug()<<"\nApi Exists: Api Code "<< apiCode << "Method Code "<< methodCode;
 
@@ -457,8 +452,9 @@ int ApplicationService::check_login_form_submission(struct mg_connection *conn)
 
 // manage the request
 int ApplicationService::serve_request(struct mg_connection *conn) {
-    fprintf(stderr,"\nUri: %s\n",conn->uri);
-    fprintf(stderr,"\nserver requests at  %s\n",conn->uri);
+
+    //fprintf(stderr,"\nUri: %s\n",conn->uri);
+    //fprintf(stderr,"\nserver requests at  %s\n",conn->uri);
 
     std::string uri (conn->uri);
 
@@ -498,6 +494,7 @@ int ApplicationService::ev_handler(struct mg_connection *conn, enum mg_event ev)
 
        {   conn->content[conn->content_len]='\0';
            std::string wsMessage = (conn->content);
+            if (wsMessage.length()!=0)
             qDebug() << "websocket message: "+ QString::fromStdString(wsMessage);
            return send_reply(conn);
        }

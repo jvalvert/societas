@@ -7,12 +7,17 @@
  void DataAccessService::run()
      {  quitting=false;
         qDebug()<<"Data Access process thread: " << currentThreadId();
+
+        // Check if the xmpp Sever is available
+
+
         ConnectionError ce = gloox::ConnNoError;
          //TODO: Store the default identity (or the last used) to be used in the next line:
                                    //user          //path             //password
                // using SQLlite database
 
-        std::string strXmppLoginResult = xmpp_Login("valvert","CentralServices");
+
+        std::string strXmppLoginResult = xmpp_Login("societas","123456789");
 
         // TODO:  Implement a util library that output the log
         qDebug() << "To Log: " << QString::fromStdString(strXmppLoginResult);
@@ -56,7 +61,7 @@
         }
        QString qCurrTime= QTime::currentTime().toString();
 
-       if (ce != gloox::ConnNoError)
+       if (ce == gloox::ConnNotConnected)
         {
            loggedIn=false;
            return "["+qCurrTime.toStdString()+"] -FAIL- Failed to connect to XMPP server, please check the log";
@@ -65,7 +70,7 @@
        else
         {
            loggedIn=true;
-           return "["+qCurrTime.toStdString()+"] -OK- Connection Successful ";
+           return "["+qCurrTime.toStdString()+"] -OK- Connection Successful..code ";
 
         }
      }

@@ -49,6 +49,7 @@ ConnectionError xmppClient::receiveXmppMessages()
  bool xmppClient::sendMessage(std::string strJid,std::string message)
  {
      if(j->authed()) {
+     //EchoClient client(QUrl(QStringLiteral("ws://localhost:38000")),"Message from xmpp");
      qDebug()<<"Sending reply to :"+QString::fromStdString(strJid);
      Message m( Message::Chat, JID( strJid ), message );
      j->send( m );
@@ -108,7 +109,7 @@ void xmppClient::onConnect()
                                    << QString::fromStdString(msg.body());
 
     //reply example
-  //sendMessage(msg.from().bare(),"Response from original message >>>>>>\n"+msg.body()+"\n<<<<<");
+    sendMessage(msg.from().bare(),msg.body());
 
   m_messageEventFilter->raiseMessageEvent( MessageEventDisplayed );
   m_messageEventFilter->raiseMessageEvent( MessageEventComposing );
@@ -130,8 +131,8 @@ void xmppClient::onConnect()
   {
   //TODO: format the message to json
   //TODO: create and use a config file to handle the connection parameters
-  //webSocketClient client(QUrl(QStringLiteral("ws://localhost:38000")),QString::fromStdString(msg.body()));
-  EchoClient client(QUrl(QStringLiteral("ws://localhost:38000")),"Message from xmpp");
+
+
 
   }
 

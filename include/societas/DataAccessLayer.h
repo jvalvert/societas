@@ -4,7 +4,7 @@
 #include <QtCore>
 using namespace std;
 
-class DataAccessService : public QThread
+class DataAccessService : public QThread // Implement Data Access Layer Thread
 {
     Q_OBJECT
 
@@ -23,8 +23,8 @@ class DataAccessService : public QThread
     private:
          //TODO: create a "config.xx" file that contains all the parameters of the system
          //      instead of parameter hardcoding
-         const string xmppServer = "xmpp.cambrian.org";
-         const string xmppResource = "Cambrian";
+         const string xmppServer = "conversejs.org";
+         const string xmppResource = "";
          bool loggedIn;
 
 };
