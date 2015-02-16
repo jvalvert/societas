@@ -21,7 +21,8 @@ class BusinessLayerService: public QThread // Implement Bussines Layer Thread
     Q_OBJECT
 
     void run();
-
+// starts the listener for  zeroMQ Rep socket
+    void startZMQRep();
 //crypto methods
     std::string crypto_secureRandom(int low, int high,std::string source);
 //test methods

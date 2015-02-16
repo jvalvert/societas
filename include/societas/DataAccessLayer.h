@@ -18,6 +18,8 @@ class DataAccessService : public QThread // Implement Data Access Layer Thread
    /// sqllite Services methods
    /// 0mq Services methods
 
+
+
     private slots:
     void sl_quit();
     private:

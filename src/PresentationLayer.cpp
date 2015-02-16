@@ -14,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QWebPage * poPage = startup->page();
     poPage->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true); //enable Inspect context menu
     // Load the startup screen
-    startup->load(QUrl("http://localhost:38000"));
+    startup->load(QUrl("https://banking.centralservices.io/demo/?marketid=BBTC_BUSD%7CCBTC_CCNY"));
+    //startup->load(QUrl("http://localhost:38000"));
     splashScreen(true); //show the progress bar and splash screen while the app loads
 }
 

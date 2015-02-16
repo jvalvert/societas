@@ -45,6 +45,9 @@
             }//forever
      }
 
+
+
+
  std::string DataAccessService::xmpp_Login(std::string strJid,std::string strPassword )
     {
        ConnectionError ce=gloox::ConnNoError;

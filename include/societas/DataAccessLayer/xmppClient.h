@@ -70,68 +70,81 @@ class xmppClient : public MessageSessionHandler, ConnectionListener, LogHandler,
     virtual void handleLog( LogLevel level, LogArea area, const std::string& message );
     virtual void handleItemSubscribed( const JID& jid )
         {
-          printf( "subscribed %s\n", jid.bare().c_str() );
+          qDebug()<< "subscribed "<< jid.bare().c_str();
         }
 
         virtual void handleItemAdded( const JID& jid )
         {
-          printf( "added %s\n", jid.bare().c_str() );
+          qDebug()<< "added "<< jid.bare().c_str() ;
         }
 
         virtual void handleItemUnsubscribed( const JID& jid )
         {
-          printf( "unsubscribed %s\n", jid.bare().c_str() );
+          qDebug() << "unsubscribed %s\n" <<jid.bare().c_str() ;
         }
 
         virtual void handleItemRemoved( const JID& jid )
         {
-          printf( "removed %s\n", jid.bare().c_str() );
+          qDebug() << "removed %s\n" << jid.bare().c_str() ;
         }
 
         virtual void handleItemUpdated( const JID& jid )
         {
-          printf( "updated %s\n", jid.bare().c_str() );
+          qDebug()<< "updated %s\n" << jid.bare().c_str() ;
         }
 
     virtual void handleRoster( const Roster& roster )
         {
-          printf( "roster arriving\nitems:\n" );
+
+          qDebug() << "Roster Arriving :";
           Roster::const_iterator it = roster.begin();
           for( ; it != roster.end(); ++it )
           {
-            printf( "jid: %s, name: %s, subscription: %d\n",
-                    (*it).second->jidJID().full().c_str(), (*it).second->name().c_str(),
-                    (*it).second->subscription() );
+           qDebug() << "jid:" << (*it).second->jidJID().full().c_str()
+                    << "name:" << (*it).second->name().c_str()
+                    << "subscription:" << (*it).second->subscription();
+
             StringList g = (*it).second->groups();
             StringList::const_iterator it_g = g.begin();
             for( ; it_g != g.end(); ++it_g )
-              printf( "\tgroup: %s\n", (*it_g).c_str() );
+            qDebug() << "\tgroup:" << (*it_g).c_str();
             RosterItem::ResourceMap::const_iterator rit = (*it).second->resources().begin();
             for( ; rit != (*it).second->resources().end(); ++rit )
-              printf( "resource: %s\n", (*rit).first.c_str() );
+            qDebug() << "resource: " << (*rit).first.c_str();
+
           }
         }
 
         virtual void handleRosterError( const IQ& /*iq*/ )
         {
-          printf( "a roster-related error occured\n" );
+          qDebug() << "a roster-related error occured";
         }
 
         virtual void handleRosterPresence( const RosterItem& item, const std::string& resource,
                                            Presence::PresenceType presence, const std::string& /*msg*/ )
         {
-          printf( "presence received: %s/%s -- %d\n", item.jidJID().full().c_str(), resource.c_str(), presence );
+         qDebug() << "presence received: jid = " <<  item.jidJID().full().c_str()
+                  << " resource = "  << resource.c_str()
+                  << " presence code = "<< presence;
+
         }
 
          virtual void handleSelfPresence( const RosterItem& item, const std::string& resource,
                                            Presence::PresenceType presence, const std::string& /*msg*/ )
         {
-          printf( "self presence received: %s/%s -- %d\n", item.jidJID().full().c_str(), resource.c_str(), presence );
+         qDebug() << "Self presence received: "
+                   << "jid = "<< item.jidJID().full().c_str()
+                   << " resource = " << resource.c_str()
+                   << " presence code = " << presence;
+
+
         }
 
         virtual bool handleSubscriptionRequest( const JID& jid, const std::string& /*msg*/ )
         {
-          printf( "subscription: %s\n", jid.bare().c_str() );
+          qDebug() << "Subscription Request: "
+                   <<  "Requester jid = " << jid.bare().c_str();
+
           StringList groups;
           JID id( jid );
           j->rosterManager()->subscribe( id, "", groups, "" );
@@ -140,13 +153,15 @@ class xmppClient : public MessageSessionHandler, ConnectionListener, LogHandler,
 
         virtual bool handleUnsubscriptionRequest( const JID& jid, const std::string& /*msg*/ )
         {
-          printf( "unsubscription: %s\n", jid.bare().c_str() );
+          qDebug() << "Unsubscription Request: "
+                   <<  "Requester jid = " << jid.bare().c_str();
+
           return true;
         }
 
         virtual void handleNonrosterPresence( const Presence& presence )
         {
-          printf( "received presence from entity not in the roster: %s\n", presence.from().full().c_str() );
+          qDebug() << "received presence from entity not in the roster: " << presence.from().full().c_str();
         }
 
 

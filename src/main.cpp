@@ -22,7 +22,7 @@ int testRunPrerequisites() //return 0 if all is ok, otherwise return the requisi
         if (IsProcessRunning((wchar_t *)processName.c_str()))
             {
             std::cout << "There is another instance of Societas running, please close it and try again\n";
-            return false;
+            return 1;
             }
 
    NetworkUtils networkUtils;
@@ -48,8 +48,6 @@ return 0;
 int main(int argc, char *argv[])
 {    
 
-
-
     if (testRunPrerequisites()==0)
     {
     /// Instanciate Main Process
@@ -73,18 +71,18 @@ int main(int argc, char *argv[])
 
 
    ///////////////////////APPLICATION LAYER THREAD
-       ApplicationService appServiceThread;
-       // destroy the Application Thread before kill the main process
-       QObject::connect(&mainProcess, SIGNAL(aboutToQuit()), &appServiceThread, SLOT(sl_quit()));
-       //start application service Thread
-       appServiceThread.start();
+      ApplicationService appServiceThread;
+      // destroy the Application Thread before kill the main process
+      QObject::connect(&mainProcess, SIGNAL(aboutToQuit()), &appServiceThread, SLOT(sl_quit()));
+      //start application service Thread
+      appServiceThread.start();
 
    ///////////////////////DATA ACCESS THREAD
-         DataAccessService dataAccessServiceThread;
-         // destroy the Application Thread before kill the main process
-         QObject::connect(&mainProcess, SIGNAL(aboutToQuit()), &dataAccessServiceThread, SLOT(sl_quit()));
-         //start application service Thread
-         dataAccessServiceThread.start();
+       DataAccessService dataAccessServiceThread;
+       // destroy the Application Thread before kill the main process
+       QObject::connect(&mainProcess, SIGNAL(aboutToQuit()), &dataAccessServiceThread, SLOT(sl_quit()));
+       //start application service Thread
+       dataAccessServiceThread.start();
 
    ///////////////////////PRESENTATION LAYER
     MainWindow societasMainWindow;

@@ -15,28 +15,17 @@
 void BusinessLayerService::run()
     {
     qDebug()<<"*Bussines layer process thread: " << currentThreadId();
+    startZMQRep();
+}
+
+
+void BusinessLayerService::startZMQRep()
+{
     qDebug() << "   Bussines Logic Server listening at "<< QString::fromStdString(zmqRepReqPort)<<"...";
     // Socket to talk to clients
-    void *context = zmq_ctx_new ();
-    void *responder = zmq_socket (context, ZMQ_REP);
-    std::string bindString = "tcp://127.0.0.1:"+zmqRepReqPort;
-    int rc = zmq_bind (responder, bindString.c_str());
 
-    assert (rc == 0);
-    char buffer[500];
-    forever {
-
-    zmq_recv (responder, buffer, 500, 0);
-
-    msgpack::unpacked msg;    // includes memory pool and deserialized object
-    msgpack::unpack(msg, buffer, 500);
-    msgpack::object obj = msg.get();
-    qDebug() << "Received zmq message from client";
-    std::cout <<"zmq response: "<< obj << std::endl;
-    sleep (1); // Do some 'work'
-    zmq_send (responder, "Message received from zmq server", 20, 0);
-    }
 }
+
 
 void BusinessLayerService::sl_quit()
 {
