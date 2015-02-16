@@ -1,9 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include <ApplicationLayer.h>
-#include <DataAccessLayer/xmppClient.h>
-
+#include <PresentationLayer/featurepermissionbar.h>
+#include <QWebEnginePage>
+#include <QtWebEngineWidgets>
+#include <QWebEngineHistory>
+#include <QWebEngineSettings>
 #include <QMainWindow>
+
+QT_BEGIN_NAMESPACE
+class QWebEngineView;
+QT_END_NAMESPACE
 
 namespace Ui {
 class MainWindow;
@@ -21,11 +28,20 @@ public slots:
 protected slots:
     void setProgress(int p);
     void finishLoading(bool);
+    void adjustTitle();
+    void viewSource();
 
 private:
     Ui::MainWindow *ui;
     void refreshLoadProgress(int progress);
     void splashScreen(bool show);
+    QString jQuery;
+    QWebEngineView *view;
+    int progress;
+
+private slots:
+    void onFeaturePermissionRequested(const QUrl &securityOrigin, QWebEnginePage::Feature feature);
+
 };
 extern MainWindow * pMainWindow;
 extern bool societasQuit;

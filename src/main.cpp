@@ -1,9 +1,11 @@
 #include <QApplication>
+
 #include "PresentationLayer.h"
 #include "BusinessLayer.h"
 #include "DataAccessLayer.h"
 #include "util/socket/NetworkUtils.h"
 #include "util/process/Process.h"
+
 
 int testRunPrerequisites() //return 0 if all is ok, otherwise return the requisite that fails
 {
@@ -17,7 +19,7 @@ int testRunPrerequisites() //return 0 if all is ok, otherwise return the requisi
     // TODO: get this parameter from a Config file
     std::string processName = "societas";
    // std::string xmppServer="xmpp.cambrian.org";
-    std::string xmppServer="jabb3r.net";
+    std::string xmppServer="conversejs.org";
 
         if (IsProcessRunning((wchar_t *)processName.c_str()))
             {

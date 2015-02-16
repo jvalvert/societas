@@ -11,9 +11,8 @@ HEADERS += \
     $$PWD/include/util/socket/Socket.h \
     $$PWD/include/util/socket/SocketException.h \
     $$PWD/include/util/socket/NetworkUtils.h \
-    $$PWD/include/util/process/Process.h
-
-
+    $$PWD/include/util/process/Process.h \
+    $$PWD/include/societas/PresentationLayer/featurepermissionbar.h
 
 SOURCES += \
     $$PWD/src/main.cpp \
@@ -26,9 +25,10 @@ SOURCES += \
     $$PWD/src/util/socket/clientSocket.cpp \
     $$PWD/src/util/socket/Socket.cpp \
     $$PWD/src/util/socket/NetworkUtils.cpp \
-
-
-
+    $$PWD/src/PresentationLayer/featurepermissionbar.cpp
 
 FORMS += $$PWD/src/forms/MainWindow.ui
+
+RESOURCES += \
+    $$PWD/resources.qrc
 

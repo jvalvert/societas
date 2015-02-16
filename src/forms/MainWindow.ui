@@ -14,26 +14,11 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWebView" name="webView">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>761</width>
-      <height>511</height>
-     </rect>
-    </property>
-    <property name="url">
-     <url>
-      <string>about:blank</string>
-     </url>
-    </property>
-   </widget>
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>250</y>
+      <x>230</x>
+      <y>530</y>
       <width>551</width>
       <height>23</height>
      </rect>
@@ -45,9 +30,9 @@
    <widget class="QLabel" name="Label_Progress_Bar">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>250</y>
-      <width>171</width>
+      <x>10</x>
+      <y>530</y>
+      <width>211</width>
       <height>20</height>
      </rect>
     </property>
@@ -55,7 +40,23 @@
      <enum>QFrame::NoFrame</enum>
     </property>
     <property name="text">
+     <string>Loading...</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="LogoSplash">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>10</y>
+      <width>441</width>
+      <height>411</height>
+     </rect>
+    </property>
+    <property name="text">
      <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../../resources.qrc">:/resources/societaslogo.png</pixmap>
     </property>
    </widget>
   </widget>
@@ -71,13 +72,8 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QWebView</class>
-   <extends>QWidget</extends>
-   <header>QtWebKitWidgets/QWebView</header>
-  </customwidget>
- </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

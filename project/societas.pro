@@ -11,7 +11,7 @@ VERSION = 0.1.0
 QT       += core gui websockets
 QMAKE_CXXFLAGS +=  -Wall -Wno-c++11-extensions
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webenginewidgets
 
 mac:{
 

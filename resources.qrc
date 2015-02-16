@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/societaslogo.png</file>
+    </qresource>
+</RCC>

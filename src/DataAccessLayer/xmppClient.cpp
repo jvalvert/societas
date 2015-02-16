@@ -1,7 +1,7 @@
 #include <DataAccessLayer/xmppClient.h>
 #include <iostream>
 #include <QMessageBox>
-#include <PresentationLayer.h>
+
 
 gloox::ConnectionError xmppClient::startXmppSession(std::string strJid,std::string strXmppServer,std::string strXmppResource,std::string strJidPassword)
 {
